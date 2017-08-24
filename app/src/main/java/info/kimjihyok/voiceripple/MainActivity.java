@@ -5,10 +5,10 @@ import android.content.pm.PackageManager;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -16,6 +16,9 @@ import android.widget.Button;
 
 import java.io.File;
 import java.io.IOException;
+
+import info.kimjihyok.ripplelibrary.VoiceRipple;
+import info.kimjihyok.ripplelibrary.VoiceRippleView;
 
 public class MainActivity extends AppCompatActivity implements MediaRecorder.OnErrorListener, MediaRecorder.OnInfoListener{
   private static final String TAG = "MainActivity";
@@ -38,10 +41,14 @@ public class MainActivity extends AppCompatActivity implements MediaRecorder.OnE
   // Handler for updating ripple effect
   private Handler handler;
 
+  // Initialize Voice Ripple
+  private VoiceRipple voiceRipple;
+
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
+
 
     voiceRecordButton = (Button) findViewById(R.id.voice_record_button);
     voiceRecordButton.setOnClickListener(new View.OnClickListener() {
@@ -88,6 +95,13 @@ public class MainActivity extends AppCompatActivity implements MediaRecorder.OnE
     ActivityCompat.requestPermissions(this, permissions, REQUEST_RECORD_AUDIO_PERMISSION);
 
     handler = new Handler();
+
+
+//    voiceRipple = new VoiceRippleView(this);
+//    voiceRipple.setTargetView(voiceRecordButton);
+    voiceRipple = (VoiceRipple) findViewById(R.id.voice_ripple_view);
+    voiceRipple.setRippleColor(ContextCompat.getColor(this, R.color.colorPrimary));
+    voiceRipple.setDampingAmplitude(4000);
   }
 
   public boolean deleteFilesInDir(File path) {
@@ -155,11 +169,12 @@ public class MainActivity extends AppCompatActivity implements MediaRecorder.OnE
   }
 
   // updates the visualizer every 50 milliseconds
+  // this will be moved in the VoiceRipple
   Runnable updateRipple = new Runnable() {
     @Override
     public void run() {
       if (isRecording) {
-        Log.d(TAG, "updateRipple(): " + recorder.getMaxAmplitude());
+        voiceRipple.drop(recorder.getMaxAmplitude());
 
         handler.postDelayed(this, 40);
       }

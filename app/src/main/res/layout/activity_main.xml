@@ -14,6 +14,14 @@
         android:layout_margin="16dp"
         android:text="@string/start_recording"/>
 
+    <info.kimjihyok.ripplelibrary.VoiceRippleView
+        android:layout_margin="16dp"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/voice_ripple_view"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_above="@id/voice_record_button"/>
+
     <Button
         android:id="@+id/voice_play_button"
         android:layout_width="wrap_content"
