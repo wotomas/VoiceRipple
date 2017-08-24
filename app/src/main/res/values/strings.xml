@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">VoiceRipple</string>
+    <string name="start_recording">Start Recording</string>
+    <string name="stop_recording">Stop Recording</string>
+    <string name="play">Play</string>
+
+</resources>
