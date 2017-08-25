@@ -69,6 +69,10 @@ public class MainActivity extends AppCompatActivity {
     voiceRipple.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
     voiceRipple.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
 
+    // inner icon
+    voiceRipple.setRecordDrawable(ContextCompat.getDrawable(this, R.drawable.record), ContextCompat.getDrawable(this, R.drawable.recording));
+    voiceRipple.setIconSize(30);
+
     voiceRipple.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View view) {

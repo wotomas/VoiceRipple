@@ -3,5 +3,6 @@
     <declare-styleable name="VoiceRippleView">
         <attr name="rippleColor" format="color"/>
         <attr name="rippleRadius" format="integer"/>
+        <attr name="iconSize" format="integer" />
     </declare-styleable>
 </resources>

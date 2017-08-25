@@ -5,6 +5,7 @@ import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.drawable.Drawable;
 import android.media.MediaRecorder;
 import android.os.Handler;
 import android.support.annotation.ColorInt;
@@ -25,6 +26,7 @@ public class VoiceRippleView extends View {
   private static final String TAG = "VoiceRippleView";
   private static final double AMPLITUDE_REFERENCE = 32767.0;
   private static int MIN_RADIUS;
+  private static int MIN_ICON_SIZE;
   private static final int INVALID_PARAMETER = -1;
   private Context context;
 
@@ -32,6 +34,7 @@ public class VoiceRippleView extends View {
   private int rippleColor;
   private int rippleRadius;
   private int backgroundRadius;
+  private int iconSize;
   private boolean isRecording;
 
   private int rippleDecayRate = INVALID_PARAMETER;
@@ -44,6 +47,8 @@ public class VoiceRippleView extends View {
   private MediaRecorder recorder;
   private Paint ripplePaint;
   private Paint rippleBackgroundPaint;
+  private Drawable recordIcon;
+  private Drawable recordingIcon;
   private OnClickListener listener;
   private Handler handler;  // Handler for updating ripple effect
 
@@ -67,10 +72,12 @@ public class VoiceRippleView extends View {
     this.context = context;
 
     MIN_RADIUS = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 50, getResources().getDisplayMetrics());
+    MIN_ICON_SIZE = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 10, getResources().getDisplayMetrics());
     TypedArray a = getContext().getTheme().obtainStyledAttributes(attrs, R.styleable.VoiceRippleView, 0, 0);
     try {
       rippleColor = a.getColor(R.styleable.VoiceRippleView_rippleColor, Color.BLACK);
       rippleRadius = a.getInt(R.styleable.VoiceRippleView_rippleRadius, MIN_RADIUS);
+      iconSize = a.getInt(R.styleable.VoiceRippleView_iconSize, MIN_ICON_SIZE);
     } finally {
       a.recycle();
     }
@@ -150,6 +157,14 @@ public class VoiceRippleView extends View {
 
     canvas.drawCircle(viewWidthHalf, viewHeightHalf, rippleRadius, ripplePaint);
     canvas.drawCircle(viewWidthHalf, viewHeightHalf, backgroundRadius, rippleBackgroundPaint);
+
+    if (isRecording) {
+      recordingIcon.setBounds(viewWidthHalf - iconSize, viewHeightHalf - iconSize, viewWidthHalf + iconSize, viewHeightHalf + iconSize);
+      recordingIcon.draw(canvas);
+    } else {
+      recordIcon.setBounds(viewWidthHalf - iconSize, viewHeightHalf - iconSize, viewWidthHalf + iconSize, viewHeightHalf + iconSize);
+      recordIcon.draw(canvas);
+    }
   }
 
   @Override
@@ -184,6 +199,10 @@ public class VoiceRippleView extends View {
     this.audioEncoder = audioEncoder;
   }
 
+  public void setIconSize(int dpSize) {
+    this.iconSize = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dpSize / 2, getResources().getDisplayMetrics());
+    invalidate();
+  }
 
   public void setRippleColor(int color) {
     this.rippleColor = color;
@@ -261,6 +280,7 @@ public class VoiceRippleView extends View {
     recorder.stop();
     recorder.reset();
     handler.removeCallbacks(updateRipple);
+    invalidate();
   }
 
   public void startRecording() throws IOException {
@@ -269,6 +289,7 @@ public class VoiceRippleView extends View {
     recorder.start();
     isRecording = true;
     handler.post(updateRipple);
+    invalidate();
   }
 
   private void checkValidState() {
@@ -299,4 +320,8 @@ public class VoiceRippleView extends View {
     }
   };
 
+  public void setRecordDrawable(Drawable recordIcon, Drawable recordingIcon) {
+    this.recordIcon = recordIcon;
+    this.recordingIcon = recordingIcon;
+  }
 }
