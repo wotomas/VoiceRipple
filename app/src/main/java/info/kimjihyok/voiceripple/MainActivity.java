@@ -18,7 +18,6 @@ import java.io.File;
 import java.io.IOException;
 
 import info.kimjihyok.ripplelibrary.VoiceRipple;
-import info.kimjihyok.ripplelibrary.VoiceRippleView;
 
 public class MainActivity extends AppCompatActivity implements MediaRecorder.OnErrorListener, MediaRecorder.OnInfoListener{
   private static final String TAG = "MainActivity";
@@ -101,7 +100,7 @@ public class MainActivity extends AppCompatActivity implements MediaRecorder.OnE
 //    voiceRipple.setTargetView(voiceRecordButton);
     voiceRipple = (VoiceRipple) findViewById(R.id.voice_ripple_view);
     voiceRipple.setRippleColor(ContextCompat.getColor(this, R.color.colorPrimary));
-    voiceRipple.setDampingAmplitude(4000);
+    voiceRipple.setThresholdRate(VoiceRipple.Threshold.LOW);
   }
 
   public boolean deleteFilesInDir(File path) {

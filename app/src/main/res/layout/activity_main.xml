@@ -18,8 +18,8 @@
         android:layout_margin="16dp"
         android:layout_centerHorizontal="true"
         android:id="@+id/voice_ripple_view"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:layout_above="@id/voice_record_button"/>
 
     <Button

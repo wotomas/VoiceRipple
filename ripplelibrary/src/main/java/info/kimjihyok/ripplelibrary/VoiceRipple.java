@@ -10,6 +10,11 @@ import android.widget.Button;
 public interface VoiceRipple {
   void setTargetView(View parentView);
   void setRippleColor(int color);
-  void setDampingAmplitude(int dampingAmplitude);
+  void setThresholdRate(Threshold threshold);
   void drop(int amplitude);
+
+
+  enum Threshold {
+    LOW, MEDIUM, HIGH
+  }
 }
