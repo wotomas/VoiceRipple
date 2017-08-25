@@ -75,7 +75,7 @@ public class VoiceRippleView extends View {
     MIN_ICON_SIZE = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 10, getResources().getDisplayMetrics());
     TypedArray a = getContext().getTheme().obtainStyledAttributes(attrs, R.styleable.VoiceRippleView, 0, 0);
     try {
-      rippleColor = a.getColor(R.styleable.VoiceRippleView_rippleColor, Color.BLACK);
+      rippleColor = a.getColor(R.styleable.VoiceRippleView_rippleColor, Color.GRAY);
       rippleRadius = a.getInt(R.styleable.VoiceRippleView_rippleRadius, MIN_RADIUS);
       iconSize = a.getInt(R.styleable.VoiceRippleView_iconSize, MIN_ICON_SIZE);
     } finally {
@@ -114,7 +114,7 @@ public class VoiceRippleView extends View {
     this.recorder = recorder;
   }
 
-  public void onStop() {
+  public void onStop() throws IllegalStateException {
     if (recorder != null) {
       recorder.stop();
     }
@@ -222,6 +222,7 @@ public class VoiceRippleView extends View {
         this.thresholdRate = 20;
         break;
     }
+    invalidate();
   }
 
   public void setRippleDecayRate(Rate rate) {
@@ -236,15 +237,17 @@ public class VoiceRippleView extends View {
         this.rippleDecayRate = 20;
         break;
     }
+    invalidate();
   }
 
 
   public void setBackgroundRippleRatio(double ratio) {
-    if (1.1 > ratio || ratio > 1.9) {
-      throw new IllegalStateException("Background Ripple ratio should be bewteen 1.1 and 1.9, but you suggested: " + ratio);
+    if (1.01 > ratio || ratio > 3.0) {
+      throw new IllegalStateException("Background Ripple ratio should be between 1.01 and 3.0, but you suggested: " + ratio);
     }
 
     this.backgroundRippleRatio = ratio;
+    invalidate();
   }
 
   /**

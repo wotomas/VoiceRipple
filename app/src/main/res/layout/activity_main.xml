@@ -4,21 +4,84 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context="info.kimjihyok.voiceripple.MainActivity">
 
-    <info.kimjihyok.ripplelibrary.VoiceRippleView
+    <LinearLayout
+        android:id="@+id/voice_panel"
+        android:elevation="3dp"
         android:layout_centerHorizontal="true"
-        android:id="@+id/voice_ripple_view"
-        android:layout_width="200dp"
-        android:layout_height="200dp"
-        android:layout_alignParentTop="true"/>
-
-    <Button
-        android:id="@+id/voice_play_button"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/play"
-        android:layout_centerHorizontal="true"
-        android:layout_margin="16dp"
-        android:layout_below="@+id/voice_ripple_view"/>
+        android:gravity="center"
+        android:background="#E9E9E9"
+        android:layout_alignParentTop="true" >
+
+        <info.kimjihyok.ripplelibrary.VoiceRippleView
+            android:id="@+id/voice_ripple_view"
+            app:rippleColor="@color/colorPrimary"
+            android:layout_width="200dp"
+            android:layout_height="200dp"/>
+    </LinearLayout>
+
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/voice_panel"
+        android:padding="8dp">
+
+        <LinearLayout
+            android:gravity="center_horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <com.larswerkman.holocolorpicker.ColorPicker
+                android:id="@+id/picker"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Icon Size: "/>
+
+                <android.support.v7.widget.AppCompatSeekBar
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/icon_size_seekbar"/>
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Ripple Size: "/>
+
+                <android.support.v7.widget.AppCompatSeekBar
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/ripple_size_seekbar"/>
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/voice_play_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/play"
+                android:layout_margin="16dp"/>
+        </LinearLayout>
+    </ScrollView>
 </RelativeLayout>

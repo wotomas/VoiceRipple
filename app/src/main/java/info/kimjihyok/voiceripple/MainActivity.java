@@ -10,8 +10,12 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.View;
 import android.widget.Button;
+import android.widget.SeekBar;
+
+import com.larswerkman.holocolorpicker.ColorPicker;
 
 import java.io.File;
 import java.io.IOException;
@@ -96,7 +100,12 @@ public class MainActivity extends AppCompatActivity {
   @Override
   protected void onStop() {
     super.onStop();
-    voiceRipple.onStop();
+    try {
+      voiceRipple.onStop();
+    } catch (IllegalStateException e) {
+      Log.e(TAG, "onStop(): ", e);
+    }
+
 
     if (player != null) {
       player.release();
@@ -107,7 +116,6 @@ public class MainActivity extends AppCompatActivity {
   @Override
   protected void onDestroy() {
     super.onDestroy();
-
     voiceRipple.onDestroy();
   }
 
@@ -144,6 +152,60 @@ public class MainActivity extends AppCompatActivity {
         }
       }
     });
+
+    ColorPicker picker = (ColorPicker) findViewById(R.id.picker);
+    picker.setShowOldCenterColor(false);
+    picker.setOnColorChangedListener(new ColorPicker.OnColorChangedListener() {
+      @Override
+      public void onColorChanged(int color) {
+        voiceRipple.setRippleColor(color);
+      }
+    });
+
+    SeekBar iconSizeSeekBar = (SeekBar) findViewById(R.id.icon_size_seekbar);
+    iconSizeSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+      @Override
+      public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+        voiceRipple.setIconSize(i);
+      }
+
+      @Override
+      public void onStartTrackingTouch(SeekBar seekBar) {
+
+      }
+
+      @Override
+      public void onStopTrackingTouch(SeekBar seekBar) {
+
+      }
+    });
+
+
+    SeekBar rippleSizeSeekbar = (SeekBar) findViewById(R.id.ripple_size_seekbar);
+    rippleSizeSeekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+      @Override
+      public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+        if (i == 0 || i == 100) return;
+
+        voiceRipple.setBackgroundRippleRatio(1 + 2.0 * ((double) i / 100.0));
+      }
+
+      @Override
+      public void onStartTrackingTouch(SeekBar seekBar) {
+
+      }
+
+      @Override
+      public void onStopTrackingTouch(SeekBar seekBar) {
+
+      }
+    });
+
+    //TODO: 요거 두개 추가 라디오 박스로
+    //voiceRipple.setRippleDecayRate();
+    //voiceRipple.setRippleSampleRate();
+
+
   }
 
 
