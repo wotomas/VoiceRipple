@@ -10,6 +10,7 @@ import android.os.Handler;
 import android.support.annotation.ColorInt;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
+import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
@@ -23,7 +24,7 @@ import java.io.IOException;
 public class VoiceRippleView extends View {
   private static final String TAG = "VoiceRippleView";
   private static final double AMPLITUDE_REFERENCE = 32767.0;
-  private static final int MIN_RADIUS = 200;
+  private static int MIN_RADIUS;
   private static final int INVALID_PARAMETER = -1;
   private Context context;
 
@@ -65,6 +66,7 @@ public class VoiceRippleView extends View {
   private void init(Context context, AttributeSet attrs) {
     this.context = context;
 
+    MIN_RADIUS = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 50, getResources().getDisplayMetrics());
     TypedArray a = getContext().getTheme().obtainStyledAttributes(attrs, R.styleable.VoiceRippleView, 0, 0);
     try {
       rippleColor = a.getColor(R.styleable.VoiceRippleView_rippleColor, Color.BLACK);
@@ -292,7 +294,7 @@ public class VoiceRippleView extends View {
     public void run() {
       if (isRecording) {
         drop(recorder.getMaxAmplitude());
-        handler.postDelayed(this, 40);  // updates the visualizer every 50 milliseconds
+        handler.postDelayed(this, 50);  // updates the visualizer every 50 milliseconds
       }
     }
   };
