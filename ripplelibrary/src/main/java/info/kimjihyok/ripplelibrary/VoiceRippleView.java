@@ -5,29 +5,46 @@ import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.media.MediaRecorder;
+import android.os.Handler;
 import android.support.annotation.ColorInt;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
-import android.util.Log;
+import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.View;
+
+import java.io.IOException;
 
 /**
  * Created by jihyokkim on 2017. 8. 24..
  */
 
-public class VoiceRippleView extends View implements VoiceRipple {
+public class VoiceRippleView extends View {
   private static final String TAG = "VoiceRippleView";
   private static final double AMPLITUDE_REFERENCE = 32767.0;
   private static final int MIN_RADIUS = 200;
+  private static final int INVALID_PARAMETER = -1;
   private Context context;
 
   @ColorInt
   private int rippleColor;
-  private Paint ripplePaint;
-  private int thresholdRate;
-
-
   private int rippleRadius;
+  private int backgroundRadius;
+  private boolean isRecording;
+
+  private int rippleDecayRate = INVALID_PARAMETER;
+  private int thresholdRate = INVALID_PARAMETER;
+  private double backgroundRippleRatio = INVALID_PARAMETER;
+  private int audioSource = INVALID_PARAMETER;
+  private int outputFormat = INVALID_PARAMETER;
+  private int audioEncoder = INVALID_PARAMETER;
+
+  private MediaRecorder recorder;
+  private Paint ripplePaint;
+  private Paint rippleBackgroundPaint;
+  private OnClickListener listener;
+  private Handler handler;  // Handler for updating ripple effect
 
   public VoiceRippleView(Context context) {
     super(context);
@@ -51,12 +68,23 @@ public class VoiceRippleView extends View implements VoiceRipple {
     TypedArray a = getContext().getTheme().obtainStyledAttributes(attrs, R.styleable.VoiceRippleView, 0, 0);
     try {
       rippleColor = a.getColor(R.styleable.VoiceRippleView_rippleColor, Color.BLACK);
-      rippleRadius = a.getInt(R.styleable.VoiceRippleView_rippleRadius, 10);
+      rippleRadius = a.getInt(R.styleable.VoiceRippleView_rippleRadius, MIN_RADIUS);
     } finally {
       a.recycle();
     }
 
-    setThresholdRate(Threshold.LOW);
+    backgroundRadius = rippleRadius;
+    handler = new Handler();
+
+
+    this.setClickable(true);
+    this.setEnabled(true);
+    this.setFocusable(true);
+    this.setFocusableInTouchMode(true);
+
+    setBackgroundRippleRatio(1.1);
+    setRippleDecayRate(Rate.MEDIUM);
+    setRippleSampleRate(Rate.LOW);
     setupPaint();
   }
 
@@ -65,8 +93,51 @@ public class VoiceRippleView extends View implements VoiceRipple {
     ripplePaint.setStyle(Paint.Style.FILL);
     ripplePaint.setColor(rippleColor);
     ripplePaint.setAntiAlias(true);
+
+    rippleBackgroundPaint = new Paint();
+    rippleBackgroundPaint.setStyle(Paint.Style.FILL);
+    // bitwise function to set the color value and change the alpha to 25% of max.
+    rippleBackgroundPaint.setColor((rippleColor & 0x00FFFFFF) | 0x40000000);
+    rippleBackgroundPaint.setAntiAlias(true);
   }
 
+  public void setMediaRecorder(MediaRecorder recorder) {
+    this.recorder = recorder;
+  }
+
+  public void onStop() {
+    if (recorder != null) {
+      recorder.stop();
+    }
+  }
+
+  public void onDestroy() {
+    if (recorder != null) {
+      recorder.release();
+    }
+  }
+
+  @Override
+  public boolean dispatchTouchEvent(MotionEvent event) {
+    if(event.getAction() == MotionEvent.ACTION_UP) {
+      if(listener != null) listener.onClick(this);
+    }
+    return super.dispatchTouchEvent(event);
+  }
+
+
+  @Override
+  public boolean dispatchKeyEvent(KeyEvent event) {
+    if(event.getAction() == KeyEvent.ACTION_UP && (event.getKeyCode() == KeyEvent.KEYCODE_DPAD_CENTER || event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
+      if(listener != null) listener.onClick(this);
+    }
+    return super.dispatchKeyEvent(event);
+  }
+
+  @Override
+  public void setOnClickListener(OnClickListener listener) {
+    this.listener = listener;
+  }
 
   @Override
   protected void onDraw(Canvas canvas) {
@@ -76,6 +147,7 @@ public class VoiceRippleView extends View implements VoiceRipple {
     int viewHeightHalf = this.getMeasuredHeight() / 2;
 
     canvas.drawCircle(viewWidthHalf, viewHeightHalf, rippleRadius, ripplePaint);
+    canvas.drawCircle(viewWidthHalf, viewHeightHalf, backgroundRadius, rippleBackgroundPaint);
   }
 
   @Override
@@ -90,20 +162,35 @@ public class VoiceRippleView extends View implements VoiceRipple {
   }
 
 
-  @Override
-  public void setTargetView(View parentView) {
-    Log.d(TAG, "setTargetView(): " + parentView.getX() + " " + parentView.getY());
+  public boolean isRecording() {
+    return isRecording;
   }
 
-  @Override
+  public void setOutputFile(String absolutePath) {
+    recorder.setOutputFile(absolutePath);
+  }
+
+  public void setAudioSource(int audioSource) {
+    this.audioSource = audioSource;
+  }
+
+  public void setOutputFormat(int outputFormat) {
+    this.outputFormat = outputFormat;
+  }
+
+  public void setAudioEncoder(int audioEncoder) {
+    this.audioEncoder = audioEncoder;
+  }
+
+
   public void setRippleColor(int color) {
     this.rippleColor = color;
+    setupPaint();
     invalidate();
   }
 
-  @Override
-  public void setThresholdRate(Threshold threshold) {
-    switch (threshold) {
+  public void setRippleSampleRate(Rate rate) {
+    switch (rate) {
       case LOW:
         this.thresholdRate = 5;
         break;
@@ -116,23 +203,98 @@ public class VoiceRippleView extends View implements VoiceRipple {
     }
   }
 
+  public void setRippleDecayRate(Rate rate) {
+    switch (rate) {
+      case LOW:
+        this.rippleDecayRate = 5;
+        break;
+      case MEDIUM:
+        this.rippleDecayRate = 10;
+        break;
+      case HIGH:
+        this.rippleDecayRate = 20;
+        break;
+    }
+  }
+
+
+  public void setBackgroundRippleRatio(double ratio) {
+    if (1.1 > ratio || ratio > 1.9) {
+      throw new IllegalStateException("Background Ripple ratio should be bewteen 1.1 and 1.9, but you suggested: " + ratio);
+    }
+
+    this.backgroundRippleRatio = ratio;
+  }
+
   /**
    * Calculating decibels from amplitude requires the following: power_db = 20 * log10(amp / amp_ref);
    * 0db is the maximum, and everything else is negative
    * @param amplitude
    */
-  @Override
-  public void drop(int amplitude) {
+  private void drop(int amplitude) {
     int powerDb = (int)(20.0 * Math.log10((double) amplitude / AMPLITUDE_REFERENCE));
 
     // clip if change is below threshold
     final int THRESHOLD = (-1 * powerDb) / thresholdRate;
 
-    if (rippleRadius - THRESHOLD >= powerDb + MIN_RADIUS || powerDb + MIN_RADIUS >= rippleRadius + THRESHOLD) {
-      this.rippleRadius = powerDb + MIN_RADIUS;
+    if (THRESHOLD >= 0) {
+      if (rippleRadius - THRESHOLD >= powerDb + MIN_RADIUS || powerDb + MIN_RADIUS >= rippleRadius + THRESHOLD) {
+        rippleRadius = powerDb + MIN_RADIUS;
+        backgroundRadius = (int) (rippleRadius * backgroundRippleRatio);
+      } else {
+        // if decreasing velocity reached 0, it should simply match with ripple radius
+        if (((backgroundRadius - rippleRadius) / rippleDecayRate) == 0) {
+          backgroundRadius = rippleRadius;
+        } else {
+          backgroundRadius = backgroundRadius - ((backgroundRadius - rippleRadius) / rippleDecayRate);
+        }
+      }
+
       invalidate();
     }
-
-
   }
+
+  public void stopRecording() {
+    isRecording = false;
+    recorder.stop();
+    recorder.reset();
+    handler.removeCallbacks(updateRipple);
+  }
+
+  public void startRecording() throws IOException {
+    checkValidState();
+    prepareRecord();
+    recorder.start();
+    isRecording = true;
+    handler.post(updateRipple);
+  }
+
+  private void checkValidState() {
+    if (thresholdRate == INVALID_PARAMETER || backgroundRippleRatio == INVALID_PARAMETER || rippleDecayRate == INVALID_PARAMETER) {
+      throw new IllegalStateException("Set rippleSampleRate, backgroundRippleRatio and rippleDecayRate before starting to record!");
+    }
+
+    if (audioSource == INVALID_PARAMETER || outputFormat == INVALID_PARAMETER || audioEncoder == INVALID_PARAMETER) {
+      throw new IllegalStateException("You have to set audioSource, outputFormat, and audioEncoder before starting to record!");
+    }
+  }
+
+
+  private void prepareRecord() throws IOException {
+    recorder.setAudioSource(audioSource);
+    recorder.setOutputFormat(outputFormat);
+    recorder.setAudioEncoder(audioEncoder);
+    recorder.prepare();
+  }
+
+  private Runnable updateRipple = new Runnable() {
+    @Override
+    public void run() {
+      if (isRecording) {
+        drop(recorder.getMaxAmplitude());
+        handler.postDelayed(this, 40);  // updates the visualizer every 50 milliseconds
+      }
+    }
+  };
+
 }
