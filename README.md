@@ -5,13 +5,7 @@
 Voice Record Button that has ripple effect with users voice
 
 # Demo
-## Changing Color for Ripple effect
-
-[<img src="media/colorChange.gif" width="600" />]()
-
-## Modifying Settings
-
-[<img src="media/settingChange.gif" width="600" />]()
+[<img src="media/colorChange.gif" width="400" />]() [<img src="media/settingChange.gif" width="400" />]()
 
 
 # Implement
