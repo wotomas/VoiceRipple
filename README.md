@@ -4,7 +4,13 @@
 # About
 [<img src="media/voiceRippleView.gif" width="200" />]()
 
-Voice Record Button that has ripple effect with users voice 
+Voice Record Button that has ripple effect with users voice. Calculation of decibels from amplitudex by using the following:
+
+```
+power_db = 20 * log10(amp / amp_ref)
+```
+
+The aproximated decibel power of the sound is used to animate the button's ripple effect.
 
 # Demo
 [<img src="media/colorChange.gif" width="300" />]() [<img src="media/settingChange.gif" width="300" />]()
