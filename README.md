@@ -2,10 +2,12 @@
 ![API](https://img.shields.io/badge/API-16%2B-blue.svg?style=flat) ![Download](https://api.bintray.com/packages/wotomas/maven/voice-ripple-record-button/images/download.svg)
 
 # About
-Voice Record Button that has ripple effect with users voice
+[<img src="media/voiceRippleView.gif" width="200" />]()
+
+Voice Record Button that has ripple effect with users voice 
 
 # Demo
-[<img src="media/colorChange.gif" width="400" />]() [<img src="media/settingChange.gif" width="400" />]()
+[<img src="media/colorChange.gif" width="300" />]() [<img src="media/settingChange.gif" width="300" />]()
 
 
 # Implement
