@@ -1,4 +1,14 @@
 apply plugin: 'com.android.library'
+apply plugin: 'com.novoda.bintray-release'
+
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.novoda:bintray-release:0.4.0'
+    }
+}
 
 android {
     compileSdkVersion 26
@@ -28,4 +38,14 @@ dependencies {
     })
     compile 'com.android.support:appcompat-v7:26.+'
     testCompile 'junit:junit:4.12'
+}
+
+
+publish {
+    userOrg = 'wotomas'
+    groupId = 'info.kimjihyok'
+    artifactId = 'voice-ripple-record-button'
+    publishVersion = '0.0.1'
+    desc = 'Voice Record Button that has ripple effect with users voice'
+    website = 'https://github.com/wotomas/VoiceRipple'
 }

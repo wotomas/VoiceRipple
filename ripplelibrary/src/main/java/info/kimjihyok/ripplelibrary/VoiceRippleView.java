@@ -228,13 +228,13 @@ public class VoiceRippleView extends View {
   public void setRippleDecayRate(Rate rate) {
     switch (rate) {
       case LOW:
-        this.rippleDecayRate = 5;
+        this.rippleDecayRate = 20;
         break;
       case MEDIUM:
         this.rippleDecayRate = 10;
         break;
       case HIGH:
-        this.rippleDecayRate = 20;
+        this.rippleDecayRate = 5;
         break;
     }
     invalidate();

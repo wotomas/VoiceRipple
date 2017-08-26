@@ -36,6 +36,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="24sp"
+                android:padding="16dp"
+                android:text="Control Panel"/>
+
             <com.larswerkman.holocolorpicker.ColorPicker
                 android:id="@+id/picker"
                 android:layout_width="wrap_content"
@@ -75,6 +83,84 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/ripple_size_seekbar"/>
             </LinearLayout>
+
+
+            <RadioGroup
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_margin="8dp"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Decay Rate: "/>
+
+                <RadioButton
+                    android:id="@+id/option1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="8dp"
+                    android:paddingRight="8dp"
+                    android:text="LOW" />
+
+                <RadioButton
+                    android:id="@+id/option2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="8dp"
+                    android:paddingRight="8dp"
+                    android:text="MED" />
+
+                <RadioButton
+                    android:id="@+id/option3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="8dp"
+                    android:paddingRight="8dp"
+                    android:text="HIGH" />
+            </RadioGroup>
+
+
+            <RadioGroup
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_margin="8dp"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Sample Rate: "/>
+
+                <RadioButton
+                    android:id="@+id/option4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="8dp"
+                    android:paddingRight="8dp"
+                    android:text="LOW" />
+
+                <RadioButton
+                    android:id="@+id/option5"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="8dp"
+                    android:paddingRight="8dp"
+                    android:text="MED" />
+
+                <RadioButton
+                    android:id="@+id/option6"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="8dp"
+                    android:paddingRight="8dp"
+                    android:text="HIGH" />
+            </RadioGroup>
+
+
 
             <Button
                 android:id="@+id/voice_play_button"

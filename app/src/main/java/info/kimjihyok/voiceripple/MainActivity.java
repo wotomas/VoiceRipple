@@ -10,9 +10,9 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.View;
 import android.widget.Button;
+import android.widget.RadioButton;
 import android.widget.SeekBar;
 
 import com.larswerkman.holocolorpicker.ColorPicker;
@@ -201,11 +201,47 @@ public class MainActivity extends AppCompatActivity {
       }
     });
 
-    //TODO: 요거 두개 추가 라디오 박스로
-    //voiceRipple.setRippleDecayRate();
-    //voiceRipple.setRippleSampleRate();
+    final RadioButton low = (RadioButton) findViewById(R.id.option1);
+    final RadioButton medium = (RadioButton) findViewById(R.id.option2);
+    final RadioButton high = (RadioButton) findViewById(R.id.option3);
+    RadioButton.OnClickListener optionOnClickListener = new RadioButton.OnClickListener() {
+      @Override
+      public void onClick(View view) {
+        if (low.isChecked()) {
+          voiceRipple.setRippleDecayRate(Rate.LOW);
+        } else if (medium.isChecked()) {
+          voiceRipple.setRippleDecayRate(Rate.MEDIUM);
+        } else if (high.isChecked()) {
+          voiceRipple.setRippleDecayRate(Rate.HIGH);
+        }
+      }
+    };
 
+    low.setOnClickListener(optionOnClickListener);
+    medium.setOnClickListener(optionOnClickListener);
+    high.setOnClickListener(optionOnClickListener);
+    high.setChecked(true);
 
+    final RadioButton low1 = (RadioButton) findViewById(R.id.option4);
+    final RadioButton medium1 = (RadioButton) findViewById(R.id.option5);
+    final RadioButton high1 = (RadioButton) findViewById(R.id.option6);
+    RadioButton.OnClickListener optionOnClickListener2 = new RadioButton.OnClickListener() {
+      @Override
+      public void onClick(View view) {
+        if (low1.isChecked()) {
+          voiceRipple.setRippleSampleRate(Rate.LOW);
+        } else if (medium1.isChecked()) {
+          voiceRipple.setRippleSampleRate(Rate.MEDIUM);
+        } else if (high1.isChecked()) {
+          voiceRipple.setRippleSampleRate(Rate.HIGH);
+        }
+      }
+    };
+
+    low1.setOnClickListener(optionOnClickListener);
+    medium1.setOnClickListener(optionOnClickListener);
+    high1.setOnClickListener(optionOnClickListener);
+    low1.setChecked(true);
   }
 
 
