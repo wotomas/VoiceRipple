@@ -1,5 +1,5 @@
 # VoiceRipple
-![API](https://img.shields.io/badge/API-16%2B-blue.svg?style=flat) ![Download](https://api.bintray.com/packages/wotomas/maven/voice-ripple-record-button/images/download.svg)
+![API](https://img.shields.io/badge/API-15%2B-blue.svg?style=flat) ![Download](https://api.bintray.com/packages/wotomas/maven/voice-ripple-record-button/images/download.svg)
 
 # About
 [<img src="media/voiceRippleView.gif" width="200" />]()
@@ -19,7 +19,7 @@ The aproximated decibel power of the sound is used to animate the button's rippl
 # Implement
 ```gradle
 dependencies {
-  compile 'info.kimjihyok:voice-ripple-record-button:0.0.1'
+  compile "info.kimjihyok:voice-ripple-record-button:${voice-ripple-button-version"
 }
 ```
 
