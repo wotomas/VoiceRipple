@@ -288,6 +288,7 @@ public class VoiceRippleView extends View {
     if (isPrepared) {
       recorder.stop();
       recorder.reset();
+      isPrepared = false;
       handler.removeCallbacks(updateRipple);
       invalidate();
       if (recordingListener != null) {
