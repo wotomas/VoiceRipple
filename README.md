@@ -19,7 +19,7 @@ The aproximated decibel power of the sound is used to animate the button's rippl
 # Implement
 ```gradle
 dependencies {
-  compile "info.kimjihyok:voice-ripple-record-button:${voice-ripple-button-version"
+  compile "info.kimjihyok:voice-ripple-record-button:${voice-ripple-button-version}"
 }
 ```
 
