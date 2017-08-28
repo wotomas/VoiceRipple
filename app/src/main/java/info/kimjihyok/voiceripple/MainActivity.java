@@ -22,6 +22,7 @@ import java.io.IOException;
 
 import info.kimjihyok.ripplelibrary.Rate;
 import info.kimjihyok.ripplelibrary.VoiceRippleView;
+import info.kimjihyok.ripplelibrary.listener.RecordingListener;
 
 public class MainActivity extends AppCompatActivity {
   private static final String TAG = "MainActivity";
@@ -59,6 +60,17 @@ public class MainActivity extends AppCompatActivity {
     audioFile = new File(directory + "/audio.mp3");
 
     voiceRipple = (VoiceRippleView) findViewById(R.id.voice_ripple_view);
+    voiceRipple.setRecordingListener(new RecordingListener() {
+      @Override
+      public void onRecordingStopped() {
+        Log.d(TAG, "onRecordingStopped()");
+      }
+
+      @Override
+      public void onRecordingStarted() {
+        Log.d(TAG, "onRecordingStarted()");
+      }
+    });
 
     // set view related settings for ripple view
     voiceRipple.setRippleColor(ContextCompat.getColor(this, R.color.colorPrimary));
@@ -83,12 +95,7 @@ public class MainActivity extends AppCompatActivity {
         if (voiceRipple.isRecording()) {
           voiceRipple.stopRecording();
         } else {
-
-          try {
-            voiceRipple.startRecording();
-          } catch (IOException e) {
-            Log.e(TAG, "startRecording() error: ", e);
-          }
+          voiceRipple.startRecording();
         }
       }
     });

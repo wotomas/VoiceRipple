@@ -11,12 +11,15 @@ import android.os.Handler;
 import android.support.annotation.ColorInt;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 
 import java.io.IOException;
+
+import info.kimjihyok.ripplelibrary.listener.RecordingListener;
 
 /**
  * Created by jihyokkim on 2017. 8. 24..
@@ -36,6 +39,7 @@ public class VoiceRippleView extends View {
   private int backgroundRadius;
   private int iconSize;
   private boolean isRecording;
+  private boolean isPrepared;
 
   private int rippleDecayRate = INVALID_PARAMETER;
   private int thresholdRate = INVALID_PARAMETER;
@@ -51,6 +55,7 @@ public class VoiceRippleView extends View {
   private Drawable recordingIcon;
   private OnClickListener listener;
   private Handler handler;  // Handler for updating ripple effect
+  private RecordingListener recordingListener;
 
   public VoiceRippleView(Context context) {
     super(context);
@@ -115,13 +120,13 @@ public class VoiceRippleView extends View {
   }
 
   public void onStop() throws IllegalStateException {
-    if (recorder != null) {
+    if (isPrepared && recorder != null) {
       recorder.stop();
     }
   }
 
   public void onDestroy() {
-    if (recorder != null) {
+    if (isPrepared && recorder != null) {
       recorder.release();
     }
   }
@@ -280,19 +285,34 @@ public class VoiceRippleView extends View {
 
   public void stopRecording() {
     isRecording = false;
-    recorder.stop();
-    recorder.reset();
-    handler.removeCallbacks(updateRipple);
-    invalidate();
+    if (isPrepared) {
+      recorder.stop();
+      recorder.reset();
+      handler.removeCallbacks(updateRipple);
+      invalidate();
+      if (recordingListener != null) {
+        recordingListener.onRecordingStopped();
+      }
+    } else {
+      Log.i(TAG, "stopRecording(): ", new IllegalStateException("Recording should be stopped if recording has been called previously"));
+    }
   }
 
-  public void startRecording() throws IOException {
+  public void startRecording() {
     checkValidState();
-    prepareRecord();
-    recorder.start();
-    isRecording = true;
-    handler.post(updateRipple);
-    invalidate();
+    try {
+      prepareRecord();
+      recorder.start();
+      isRecording = true;
+      isPrepared = true;
+      handler.post(updateRipple);
+      invalidate();
+      if (recordingListener != null) {
+        recordingListener.onRecordingStarted();
+      }
+    } catch (Exception e) {
+      Log.e(TAG, "startRecording(): ", e);
+    }
   }
 
   private void checkValidState() {
@@ -326,5 +346,9 @@ public class VoiceRippleView extends View {
   public void setRecordDrawable(Drawable recordIcon, Drawable recordingIcon) {
     this.recordIcon = recordIcon;
     this.recordingIcon = recordingIcon;
+  }
+
+  public void setRecordingListener(RecordingListener recordingListener) {
+    this.recordingListener = recordingListener;
   }
 }
