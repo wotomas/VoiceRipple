@@ -10,6 +10,26 @@ Voice Record Button that has ripple effect with users voice. Calculation of deci
 power_db = 20 * log10(amp / amp_ref)
 ```
 
+Main method consists the following:
+
+```
+if (THRESHOLD >= 0) {
+  if (rippleRadius - THRESHOLD >= powerDb + MIN_RADIUS || powerDb + MIN_RADIUS >= rippleRadius + THRESHOLD) {
+    rippleRadius = powerDb + MIN_RADIUS;
+    backgroundRadius = (int) (rippleRadius * backgroundRippleRatio);
+  } else {
+    // if decreasing velocity reached 0, it should simply match with ripple radius
+    if (((backgroundRadius - rippleRadius) / rippleDecayRate) == 0) {
+      backgroundRadius = rippleRadius;
+    } else {
+      backgroundRadius = backgroundRadius - ((backgroundRadius - rippleRadius) / rippleDecayRate);
+    }
+  }
+
+  invalidate();
+}
+```
+
 The aproximated decibel power of the sound is used to animate the button's ripple effect.
 
 # Demo
