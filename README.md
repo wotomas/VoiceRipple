@@ -30,7 +30,7 @@ if (THRESHOLD >= 0) {
 }
 ```
 
-The aproximated decibel power of the sound is used to animate the button's ripple effect.
+The approximated decibel power of the sound is used to animate the button's ripple effect.
 
 # Demo
 [<img src="media/colorChange.gif" width="300" />]() [<img src="media/settingChange.gif" width="300" />]()
@@ -38,6 +38,10 @@ The aproximated decibel power of the sound is used to animate the button's rippl
 
 # Implement
 ```gradle
+repositories {
+  jcenter()
+}
+
 dependencies {
   compile "info.kimjihyok:voice-ripple-record-button:${voice-ripple-button-version}"
 }
