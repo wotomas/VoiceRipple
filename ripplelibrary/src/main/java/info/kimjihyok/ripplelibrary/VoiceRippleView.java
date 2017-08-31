@@ -20,6 +20,7 @@ import android.view.View;
 import java.io.IOException;
 
 import info.kimjihyok.ripplelibrary.listener.RecordingListener;
+import info.kimjihyok.ripplelibrary.renderer.Renderer;
 
 /**
  * Created by jihyokkim on 2017. 8. 24..
@@ -56,6 +57,8 @@ public class VoiceRippleView extends View {
   private OnClickListener listener;
   private Handler handler;  // Handler for updating ripple effect
   private RecordingListener recordingListener;
+
+  private Renderer currentRenderer;
 
   public VoiceRippleView(Context context) {
     super(context);
@@ -160,6 +163,7 @@ public class VoiceRippleView extends View {
     int viewWidthHalf = this.getMeasuredWidth() / 2;
     int viewHeightHalf = this.getMeasuredHeight() / 2;
 
+    currentRenderer.render(canvas, viewWidthHalf, viewHeightHalf, backgroundRadius, rippleBackgroundPaint );
     canvas.drawCircle(viewWidthHalf, viewHeightHalf, rippleRadius, ripplePaint);
     canvas.drawCircle(viewWidthHalf, viewHeightHalf, backgroundRadius, rippleBackgroundPaint);
 
