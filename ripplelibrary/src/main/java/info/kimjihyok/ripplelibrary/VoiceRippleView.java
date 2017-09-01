@@ -3,12 +3,9 @@ package info.kimjihyok.ripplelibrary;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 import android.media.MediaRecorder;
 import android.os.Handler;
-import android.support.annotation.ColorInt;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -31,11 +28,10 @@ public class VoiceRippleView extends View {
   private static final double AMPLITUDE_REFERENCE = 32767.0;
   private static int MIN_RADIUS;
   private static int MIN_ICON_SIZE;
+  private static int MIN_FIRST_RIPPLE_RADIUS;
   private static final int INVALID_PARAMETER = -1;
-  private Context context;
 
-  @ColorInt
-  private int rippleColor;
+  private int buttonRadius;
   private int rippleRadius;
   private int backgroundRadius;
   private int iconSize;
@@ -50,15 +46,17 @@ public class VoiceRippleView extends View {
   private int audioEncoder = INVALID_PARAMETER;
 
   private MediaRecorder recorder;
-  private Paint ripplePaint;
-  private Paint rippleBackgroundPaint;
   private Drawable recordIcon;
   private Drawable recordingIcon;
   private OnClickListener listener;
   private Handler handler;  // Handler for updating ripple effect
   private RecordingListener recordingListener;
-
   private Renderer currentRenderer;
+
+  public void setRenderer(Renderer currentRenderer) {
+    this.currentRenderer = currentRenderer;
+    invalidate();
+  }
 
   public VoiceRippleView(Context context) {
     super(context);
@@ -75,24 +73,24 @@ public class VoiceRippleView extends View {
     init(context, attrs);
   }
 
+  private int minFirstRadius;
 
   private void init(Context context, AttributeSet attrs) {
-    this.context = context;
-
     MIN_RADIUS = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 50, getResources().getDisplayMetrics());
     MIN_ICON_SIZE = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 10, getResources().getDisplayMetrics());
+    MIN_FIRST_RIPPLE_RADIUS = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 5, getResources().getDisplayMetrics());
     TypedArray a = getContext().getTheme().obtainStyledAttributes(attrs, R.styleable.VoiceRippleView, 0, 0);
     try {
-      rippleColor = a.getColor(R.styleable.VoiceRippleView_rippleColor, Color.GRAY);
-      rippleRadius = a.getInt(R.styleable.VoiceRippleView_rippleRadius, MIN_RADIUS);
-      iconSize = a.getInt(R.styleable.VoiceRippleView_iconSize, MIN_ICON_SIZE);
+      rippleRadius = a.getInt(R.styleable.VoiceRippleView_VoiceRippleView_rippleRadius, MIN_RADIUS);
+      iconSize = a.getInt(R.styleable.VoiceRippleView_VoiceRippleView_iconSize, MIN_ICON_SIZE);
     } finally {
       a.recycle();
     }
 
     backgroundRadius = rippleRadius;
+    buttonRadius = backgroundRadius;
+    minFirstRadius =  MIN_FIRST_RIPPLE_RADIUS;
     handler = new Handler();
-
 
     this.setClickable(true);
     this.setEnabled(true);
@@ -102,20 +100,6 @@ public class VoiceRippleView extends View {
     setBackgroundRippleRatio(1.1);
     setRippleDecayRate(Rate.MEDIUM);
     setRippleSampleRate(Rate.LOW);
-    setupPaint();
-  }
-
-  private void setupPaint() {
-    ripplePaint = new Paint();
-    ripplePaint.setStyle(Paint.Style.FILL);
-    ripplePaint.setColor(rippleColor);
-    ripplePaint.setAntiAlias(true);
-
-    rippleBackgroundPaint = new Paint();
-    rippleBackgroundPaint.setStyle(Paint.Style.FILL);
-    // bitwise function to set the color value and change the alpha to 25% of max.
-    rippleBackgroundPaint.setColor((rippleColor & 0x00FFFFFF) | 0x40000000);
-    rippleBackgroundPaint.setAntiAlias(true);
   }
 
   public void setMediaRecorder(MediaRecorder recorder) {
@@ -159,13 +143,10 @@ public class VoiceRippleView extends View {
   @Override
   protected void onDraw(Canvas canvas) {
     super.onDraw(canvas);
-
     int viewWidthHalf = this.getMeasuredWidth() / 2;
     int viewHeightHalf = this.getMeasuredHeight() / 2;
 
-    currentRenderer.render(canvas, viewWidthHalf, viewHeightHalf, backgroundRadius, rippleBackgroundPaint );
-    canvas.drawCircle(viewWidthHalf, viewHeightHalf, rippleRadius, ripplePaint);
-    canvas.drawCircle(viewWidthHalf, viewHeightHalf, backgroundRadius, rippleBackgroundPaint);
+    currentRenderer.render(canvas, viewWidthHalf, viewHeightHalf, buttonRadius, rippleRadius, backgroundRadius);
 
     if (isRecording) {
       recordingIcon.setBounds(viewWidthHalf - iconSize, viewHeightHalf - iconSize, viewWidthHalf + iconSize, viewHeightHalf + iconSize);
@@ -214,9 +195,7 @@ public class VoiceRippleView extends View {
   }
 
   public void setRippleColor(int color) {
-    this.rippleColor = color;
-    setupPaint();
-    invalidate();
+    currentRenderer.changeColor(color);
   }
 
   public void setRippleSampleRate(Rate rate) {
@@ -251,11 +230,8 @@ public class VoiceRippleView extends View {
 
 
   public void setBackgroundRippleRatio(double ratio) {
-    if (1.01 > ratio || ratio > 3.0) {
-      throw new IllegalStateException("Background Ripple ratio should be between 1.01 and 3.0, but you suggested: " + ratio);
-    }
-
     this.backgroundRippleRatio = ratio;
+    minFirstRadius = (int) (MIN_FIRST_RIPPLE_RADIUS + (MIN_FIRST_RIPPLE_RADIUS * backgroundRippleRatio));
     invalidate();
   }
 
@@ -271,15 +247,17 @@ public class VoiceRippleView extends View {
     final int THRESHOLD = (-1 * powerDb) / thresholdRate;
 
     if (THRESHOLD >= 0) {
-      if (rippleRadius - THRESHOLD >= powerDb + MIN_RADIUS || powerDb + MIN_RADIUS >= rippleRadius + THRESHOLD) {
-        rippleRadius = powerDb + MIN_RADIUS;
+      if (rippleRadius - THRESHOLD >= powerDb + MIN_RADIUS + minFirstRadius || powerDb + MIN_RADIUS + minFirstRadius >= rippleRadius + THRESHOLD) {
+        rippleRadius = powerDb + MIN_RADIUS + minFirstRadius;
         backgroundRadius = (int) (rippleRadius * backgroundRippleRatio);
       } else {
         // if decreasing velocity reached 0, it should simply match with ripple radius
         if (((backgroundRadius - rippleRadius) / rippleDecayRate) == 0) {
           backgroundRadius = rippleRadius;
+          rippleRadius = buttonRadius;
         } else {
           backgroundRadius = backgroundRadius - ((backgroundRadius - rippleRadius) / rippleDecayRate);
+          rippleRadius = rippleRadius - ((rippleRadius - buttonRadius) / rippleDecayRate);
         }
       }
 
@@ -351,6 +329,8 @@ public class VoiceRippleView extends View {
   public void setRecordDrawable(Drawable recordIcon, Drawable recordingIcon) {
     this.recordIcon = recordIcon;
     this.recordingIcon = recordingIcon;
+
+    invalidate();
   }
 
   public void setRecordingListener(RecordingListener recordingListener) {

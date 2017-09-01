@@ -9,18 +9,11 @@ import android.support.annotation.ColorInt;
  */
 
 public abstract class Renderer {
-  protected float[] points;
-  protected double ampValue = 1.0;
-
   @CallSuper
-  public void render(Canvas canvas, int , int y){
+  public void render(Canvas canvas, int x, int y, int buttonRadius, int rippleRadius, int rippleBackgroundRadius) {
 
   }
 
   public abstract void changeColor(@ColorInt int color);
-
-  public void setAmpValue(double ampValue) {
-    this.ampValue = ampValue;
-  }
 }
 

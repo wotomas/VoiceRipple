@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <declare-styleable name="VoiceRippleView">
-        <attr name="rippleColor" format="color"/>
-        <attr name="rippleRadius" format="integer"/>
-        <attr name="iconSize" format="integer" />
+        <attr name="VoiceRippleView_rippleColor" format="color"/>
+        <attr name="VoiceRippleView_rippleRadius" format="integer"/>
+        <attr name="VoiceRippleView_iconSize" format="integer" />
     </declare-styleable>
 </resources>

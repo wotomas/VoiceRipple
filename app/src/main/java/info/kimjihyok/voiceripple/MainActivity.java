@@ -2,6 +2,8 @@ package info.kimjihyok.voiceripple;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.os.Bundle;
@@ -23,6 +25,7 @@ import java.io.IOException;
 import info.kimjihyok.ripplelibrary.Rate;
 import info.kimjihyok.ripplelibrary.VoiceRippleView;
 import info.kimjihyok.ripplelibrary.listener.RecordingListener;
+import info.kimjihyok.ripplelibrary.renderer.DefaultCircleRenderer;
 
 public class MainActivity extends AppCompatActivity {
   private static final String TAG = "MainActivity";
@@ -73,7 +76,6 @@ public class MainActivity extends AppCompatActivity {
     });
 
     // set view related settings for ripple view
-    voiceRipple.setRippleColor(ContextCompat.getColor(this, R.color.colorPrimary));
     voiceRipple.setRippleSampleRate(Rate.LOW);
     voiceRipple.setRippleDecayRate(Rate.HIGH);
     voiceRipple.setBackgroundRippleRatio(1.4);
@@ -99,8 +101,34 @@ public class MainActivity extends AppCompatActivity {
         }
       }
     });
+    voiceRipple.setRenderer(new DefaultCircleRenderer(getDefaultRipplePaint(), getDefaultRippleBackgroundPaint(), getButtonPaint()));
 
     ActivityCompat.requestPermissions(this, permissions, REQUEST_RECORD_AUDIO_PERMISSION);
+  }
+  private Paint getDefaultRipplePaint() {
+    Paint ripplePaint = new Paint();
+    ripplePaint.setStyle(Paint.Style.FILL);
+    ripplePaint.setColor(ContextCompat.getColor(this, R.color.colorPrimary));
+    ripplePaint.setAntiAlias(true);
+
+    return ripplePaint;
+  }
+
+  private Paint getDefaultRippleBackgroundPaint() {
+    Paint rippleBackgroundPaint = new Paint();
+    rippleBackgroundPaint.setStyle(Paint.Style.FILL);
+    rippleBackgroundPaint.setColor((ContextCompat.getColor(this, R.color.colorPrimary) & 0x00FFFFFF) | 0x40000000);
+    rippleBackgroundPaint.setAntiAlias(true);
+
+    return rippleBackgroundPaint;
+  }
+
+  private Paint getButtonPaint() {
+    Paint paint = new Paint();
+    paint.setAntiAlias(true);
+    paint.setColor(Color.WHITE);
+    paint.setStyle(Paint.Style.FILL);
+    return paint;
   }
 
 
@@ -194,7 +222,7 @@ public class MainActivity extends AppCompatActivity {
       public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
         if (i == 0 || i == 100) return;
 
-        voiceRipple.setBackgroundRippleRatio(1 + 2.0 * ((double) i / 100.0));
+        voiceRipple.setBackgroundRippleRatio(0.5 + ((double) i / 100.0));
       }
 
       @Override

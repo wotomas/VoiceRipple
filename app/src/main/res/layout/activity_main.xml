@@ -19,7 +19,6 @@
 
         <info.kimjihyok.ripplelibrary.VoiceRippleView
             android:id="@+id/voice_ripple_view"
-            app:rippleColor="@color/colorPrimary"
             android:layout_width="200dp"
             android:layout_height="200dp"/>
     </LinearLayout>
