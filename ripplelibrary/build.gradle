@@ -45,7 +45,7 @@ publish {
     userOrg = 'wotomas'
     groupId = 'info.kimjihyok'
     artifactId = 'voice-ripple-record-button'
-    publishVersion = '0.0.6'
+    publishVersion = '0.1.0'
     desc = 'Voice Record Button that has ripple effect with users voice'
     website = 'https://github.com/wotomas/VoiceRipple'
 }
