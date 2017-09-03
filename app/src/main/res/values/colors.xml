@@ -3,4 +3,6 @@
     <color name="colorPrimary">#FFCC00</color>
     <color name="colorPrimaryDark">#000000</color>
     <color name="colorAccent">#CC0000</color>
+
+    <color name="temp_color">#482429</color>
 </resources>

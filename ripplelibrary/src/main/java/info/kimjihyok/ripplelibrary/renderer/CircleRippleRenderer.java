@@ -8,12 +8,12 @@ import android.support.annotation.ColorInt;
  * Created by jkimab on 2017. 9. 1..
  */
 
-public class DefaultCircleRenderer extends Renderer {
+public class CircleRippleRenderer extends Renderer {
   private Paint buttonPaint;
   private Paint ripplePaint;
   private Paint rippleBackgroundPaint;
 
-  public DefaultCircleRenderer(Paint ripplePaint, Paint rippleBackgroundPaint, Paint buttonPaint) {
+  public CircleRippleRenderer(Paint ripplePaint, Paint rippleBackgroundPaint, Paint buttonPaint) {
     this.ripplePaint = ripplePaint;
     this.rippleBackgroundPaint = rippleBackgroundPaint;
     this.buttonPaint = buttonPaint;

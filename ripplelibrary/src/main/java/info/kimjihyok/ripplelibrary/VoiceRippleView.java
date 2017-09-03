@@ -18,6 +18,7 @@ import java.io.IOException;
 
 import info.kimjihyok.ripplelibrary.listener.RecordingListener;
 import info.kimjihyok.ripplelibrary.renderer.Renderer;
+import info.kimjihyok.ripplelibrary.renderer.TimerCircleRippleRenderer;
 
 /**
  * Created by jihyokkim on 2017. 8. 24..
@@ -52,6 +53,7 @@ public class VoiceRippleView extends View {
   private Handler handler;  // Handler for updating ripple effect
   private RecordingListener recordingListener;
   private Renderer currentRenderer;
+  private int currentRecordedTime = 0;
 
   public void setRenderer(Renderer currentRenderer) {
     this.currentRenderer = currentRenderer;
@@ -272,6 +274,7 @@ public class VoiceRippleView extends View {
       recorder.reset();
       isPrepared = false;
       handler.removeCallbacks(updateRipple);
+      currentRecordedTime = 0;
       invalidate();
       if (recordingListener != null) {
         recordingListener.onRecordingStopped();
@@ -321,6 +324,10 @@ public class VoiceRippleView extends View {
     public void run() {
       if (isRecording) {
         drop(recorder.getMaxAmplitude());
+        currentRecordedTime = currentRecordedTime + 50;
+        if (currentRenderer instanceof TimerCircleRippleRenderer) {
+          ((TimerCircleRippleRenderer)currentRenderer).setCurrentTimeMilliseconds(currentRecordedTime);
+        }
         handler.postDelayed(this, 50);  // updates the visualizer every 50 milliseconds
       }
     }

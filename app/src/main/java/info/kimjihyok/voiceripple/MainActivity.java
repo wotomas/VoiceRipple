@@ -25,7 +25,8 @@ import java.io.IOException;
 import info.kimjihyok.ripplelibrary.Rate;
 import info.kimjihyok.ripplelibrary.VoiceRippleView;
 import info.kimjihyok.ripplelibrary.listener.RecordingListener;
-import info.kimjihyok.ripplelibrary.renderer.DefaultCircleRenderer;
+import info.kimjihyok.ripplelibrary.renderer.Renderer;
+import info.kimjihyok.ripplelibrary.renderer.TimerCircleRippleRenderer;
 
 public class MainActivity extends AppCompatActivity {
   private static final String TAG = "MainActivity";
@@ -44,6 +45,8 @@ public class MainActivity extends AppCompatActivity {
 
   // Initialize Voice Ripple
   private VoiceRippleView voiceRipple;
+
+  private Renderer currentRenderer;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -101,9 +104,25 @@ public class MainActivity extends AppCompatActivity {
         }
       }
     });
-    voiceRipple.setRenderer(new DefaultCircleRenderer(getDefaultRipplePaint(), getDefaultRippleBackgroundPaint(), getButtonPaint()));
+
+    currentRenderer = new TimerCircleRippleRenderer(getDefaultRipplePaint(), getDefaultRippleBackgroundPaint(), getButtonPaint(), getArcPaint(), 10000.0, 0.0);
+    if (currentRenderer instanceof TimerCircleRippleRenderer) {
+      ((TimerCircleRippleRenderer) currentRenderer).setStrokeWidth(20);
+    }
+
+    voiceRipple.setRenderer(currentRenderer);
 
     ActivityCompat.requestPermissions(this, permissions, REQUEST_RECORD_AUDIO_PERMISSION);
+  }
+
+  private Paint getArcPaint() {
+    Paint paint = new Paint();
+    paint.setColor(ContextCompat.getColor(this, R.color.temp_color));
+    paint.setStrokeWidth(20);
+    paint.setAntiAlias(true);
+    paint.setStrokeCap(Paint.Cap.ROUND);
+    paint.setStyle(Paint.Style.STROKE);
+    return paint;
   }
   private Paint getDefaultRipplePaint() {
     Paint ripplePaint = new Paint();
