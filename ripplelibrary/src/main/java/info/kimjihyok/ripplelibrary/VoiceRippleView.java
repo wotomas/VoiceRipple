@@ -15,6 +15,7 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import java.io.IOException;
+import java.util.Timer;
 
 import info.kimjihyok.ripplelibrary.listener.RecordingListener;
 import info.kimjihyok.ripplelibrary.renderer.Renderer;
@@ -232,6 +233,15 @@ public class VoiceRippleView extends View implements TimerCircleRippleRenderer.T
         break;
     }
     invalidate();
+  }
+
+  public void reset() {
+    rippleRadius = 0;
+    backgroundRadius = 0;
+    if (currentRenderer instanceof TimerCircleRippleRenderer) {
+      ((TimerCircleRippleRenderer) currentRenderer).setCurrentTimeMilliseconds(0);
+    }
+    stopRecording();
   }
 
 
