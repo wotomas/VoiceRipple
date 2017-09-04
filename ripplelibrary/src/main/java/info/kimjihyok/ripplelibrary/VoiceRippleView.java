@@ -24,7 +24,7 @@ import info.kimjihyok.ripplelibrary.renderer.TimerCircleRippleRenderer;
  * Created by jihyokkim on 2017. 8. 24..
  */
 
-public class VoiceRippleView extends View {
+public class VoiceRippleView extends View implements TimerCircleRippleRenderer.TimerRendererListener {
   private static final String TAG = "VoiceRippleView";
   private static final double AMPLITUDE_REFERENCE = 32767.0;
   private static int MIN_RADIUS;
@@ -57,6 +57,9 @@ public class VoiceRippleView extends View {
 
   public void setRenderer(Renderer currentRenderer) {
     this.currentRenderer = currentRenderer;
+    if (currentRenderer instanceof TimerCircleRippleRenderer) {
+      ((TimerCircleRippleRenderer) currentRenderer).setTimerRendererListener(this);
+    }
     invalidate();
   }
 
@@ -80,7 +83,7 @@ public class VoiceRippleView extends View {
   private void init(Context context, AttributeSet attrs) {
     MIN_RADIUS = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 50, getResources().getDisplayMetrics());
     MIN_ICON_SIZE = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 10, getResources().getDisplayMetrics());
-    MIN_FIRST_RIPPLE_RADIUS = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 5, getResources().getDisplayMetrics());
+    MIN_FIRST_RIPPLE_RADIUS = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 3, getResources().getDisplayMetrics());
     TypedArray a = getContext().getTheme().obtainStyledAttributes(attrs, R.styleable.VoiceRippleView, 0, 0);
     try {
       rippleRadius = a.getInt(R.styleable.VoiceRippleView_VoiceRippleView_rippleRadius, MIN_RADIUS);
@@ -198,6 +201,7 @@ public class VoiceRippleView extends View {
 
   public void setRippleColor(int color) {
     currentRenderer.changeColor(color);
+    invalidate();
   }
 
   public void setRippleSampleRate(Rate rate) {
@@ -267,6 +271,7 @@ public class VoiceRippleView extends View {
     }
   }
 
+  @Override
   public void stopRecording() {
     isRecording = false;
     if (isPrepared) {
@@ -279,11 +284,10 @@ public class VoiceRippleView extends View {
       if (recordingListener != null) {
         recordingListener.onRecordingStopped();
       }
-    } else {
-      Log.i(TAG, "stopRecording(): ", new IllegalStateException("Recording should be stopped if recording has been called previously"));
     }
   }
 
+  @Override
   public void startRecording() {
     checkValidState();
     try {

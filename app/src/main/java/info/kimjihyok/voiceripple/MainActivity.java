@@ -120,7 +120,7 @@ public class MainActivity extends AppCompatActivity {
     paint.setColor(ContextCompat.getColor(this, R.color.temp_color));
     paint.setStrokeWidth(20);
     paint.setAntiAlias(true);
-    paint.setStrokeCap(Paint.Cap.ROUND);
+    paint.setStrokeCap(Paint.Cap.SQUARE);
     paint.setStyle(Paint.Style.STROKE);
     return paint;
   }
@@ -240,8 +240,9 @@ public class MainActivity extends AppCompatActivity {
       @Override
       public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
         if (i == 0 || i == 100) return;
-
-        voiceRipple.setBackgroundRippleRatio(0.5 + ((double) i / 100.0));
+        double ratio = 0.5 + ((double) i / 100.0);
+        voiceRipple.setBackgroundRippleRatio(ratio);
+        Log.d(TAG, "onBackgroundRippleRatio ChangedL " + ratio);
       }
 
       @Override
