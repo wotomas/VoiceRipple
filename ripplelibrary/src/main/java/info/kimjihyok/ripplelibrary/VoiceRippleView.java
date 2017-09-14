@@ -6,7 +6,6 @@ import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.media.MediaRecorder;
 import android.os.Handler;
-import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.util.TypedValue;
@@ -15,7 +14,6 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import java.io.IOException;
-import java.util.Timer;
 
 import info.kimjihyok.ripplelibrary.listener.RecordingListener;
 import info.kimjihyok.ripplelibrary.renderer.Renderer;
@@ -69,12 +67,12 @@ public class VoiceRippleView extends View implements TimerCircleRippleRenderer.T
     init(context, null);
   }
 
-  public VoiceRippleView(Context context, @Nullable AttributeSet attrs) {
+  public VoiceRippleView(Context context, AttributeSet attrs) {
     super(context, attrs);
     init(context, attrs);
   }
 
-  public VoiceRippleView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+  public VoiceRippleView(Context context, AttributeSet attrs, int defStyleAttr) {
     super(context, attrs, defStyleAttr);
     init(context, attrs);
   }

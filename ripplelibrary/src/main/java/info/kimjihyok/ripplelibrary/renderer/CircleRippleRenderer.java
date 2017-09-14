@@ -2,7 +2,6 @@ package info.kimjihyok.ripplelibrary.renderer;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;
-import android.support.annotation.ColorInt;
 
 /**
  * Created by jkimab on 2017. 9. 1..
@@ -29,7 +28,7 @@ public class CircleRippleRenderer extends Renderer {
   }
 
   @Override
-  public void changeColor(@ColorInt int color) {
+  public void changeColor(int color) {
     ripplePaint.setColor(color);
     rippleBackgroundPaint.setColor((color & 0x00FFFFFF) | 0x40000000);
   }

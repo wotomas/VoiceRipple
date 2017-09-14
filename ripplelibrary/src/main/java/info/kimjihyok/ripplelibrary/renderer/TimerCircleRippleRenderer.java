@@ -4,10 +4,6 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
-import android.support.annotation.ColorInt;
-import android.support.v4.content.ContextCompat;
-
-import info.kimjihyok.ripplelibrary.listener.RecordingListener;
 
 /**
  * Created by jkimab on 2017. 9. 1..
@@ -64,7 +60,7 @@ public class TimerCircleRippleRenderer extends CircleRippleRenderer {
   }
 
   @Override
-  public void changeColor(@ColorInt int color) {
+  public void changeColor(int color) {
     super.changeColor(color);
   }
 
